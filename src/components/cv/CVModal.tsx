@@ -1,11 +1,11 @@
 // الملف: CVModal.tsx
 // الوظيفة: نافذة منبثقة لعرض معاينة السيرة الذاتية وتحميلها بالعربية والإنجليزية
-// المحتوى: مكوّن CVModal مع handleDownload وhandlePrint ومعاينة المهارات والخلفية التعليمية
+// المحتوى: مكوّن CVModal مع handleDownload وhandlePrint ومعاينة ترويسة مختصرة للسيرة
 // الاعتماديات: useLanguage وsiteConfig وأيقونات lucide-react (مكوّن عميل)
 import React from 'react';
 import { useLanguage } from '../../i18n/LanguageContext.tsx';
 import { siteConfig } from '../../config/site.ts';
-import { X, Download, FileText, Printer, CheckCircle2, User, Mail, Globe, MapPin } from 'lucide-react';
+import { X, Download, FileText, Printer, Mail, Globe } from 'lucide-react';
 
 interface CVModalProps {
   isOpen: boolean;
@@ -31,7 +31,7 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
     const cvPath = lang === 'ar' ? siteConfig.cvArabicPath : siteConfig.cvEnglishPath;
     const link = document.createElement('a');
     link.href = cvPath;
-    link.download = `Salman_Al_Ansii_CV_${lang.toUpperCase()}.pdf`;
+    link.download = cvPath.split('/').pop() ?? `Salman_CV_${lang.toUpperCase()}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -104,47 +104,6 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Core Competencies */}
-          <div>
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-              {locale === 'ar' ? 'المهارات والخبرات الأساسية' : 'Core Competencies'}
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-300">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#FF641C]" />
-                <span>Next.js App Router & Server Components</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#FF641C]" />
-                <span>React 19 & TypeScript Strict Typing</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#FF641C]" />
-                <span>Docker Containerization & Linux Automation</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#FF641C]" />
-                <span>CI/CD Pipeline Setup & System Scalability</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Education & Background */}
-          <div>
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-              {locale === 'ar' ? 'الخلفية والتعليم' : 'Background & Focus'}
-            </h4>
-            <p className="text-xs text-gray-300 leading-relaxed">
-              {locale === 'ar'
-                ? 'متخصص في تطوير تطبيقات الويب السريعة والآمنة وأتمتة مسارات النشر السحابي والبنية التحتية. تركيز مستمر على كتابة كود نظيف وتجربة مستخدم متميزة.'
-                : 'Specializing in building high-speed, secure web applications and automated containerized deployment pipelines. Focused on clean architecture, testability, and outstanding user experiences.'}
-            </p>
-          </div>
-
-          {/* Note */}
-          <div className="p-3 bg-[#131D2A] rounded-lg border border-[#1E2630] text-[11px] text-gray-400">
-            ℹ️ {t('cvModal.previewNotice')}
-          </div>
         </div>
 
         {/* Download Buttons */}

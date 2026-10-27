@@ -16,8 +16,8 @@ export const siteConfig = {
   // Direct WhatsApp link as specified in guidelines
   whatsappNumber: '+769771924870',
   whatsappUrl: 'https://wa.me/769771924870?text=Hello%20Salman,%20I%20saw%20your%20portfolio',
-  cvEnglishPath: '/cv/Salman_Al_Ansi_CV_EN.pdf',
-  cvArabicPath: '/cv/Salman_Al_Ansi_CV_AR.pdf',
+  cvEnglishPath: '/cv/Salman_AI_Engineer_CV_en.pdf',
+  cvArabicPath: '/cv/Salman_CV_Arabic.pdf',
   stats: {
     projectsCount: '6+',
     coursesCount: '3+',
