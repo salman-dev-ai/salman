@@ -1,10 +1,50 @@
 // الملف: projects.ts
 // الوظيفة: بيانات المشاريع المستخدمة لعرض معرض الأعمال.
-// المحتوى: projectsData مصفوفة من 6 مشاريع مع العنوان والتقنيات والروابط والتفاصيل.
+// المحتوى: projectsData مصفوفة من 7 مشاريع مع العنوان والتقنيات والروابط والتفاصيل.
 // الاعتماديات: نوع Project من '../types/portfolio.ts'.
 import { Project } from '../types/portfolio.ts';
 
 export const projectsData: Project[] = [
+  {
+    id: 'proj-9',
+    slug: 'n8n-ai-automation-suite',
+    title: {
+      en: 'n8n AI Automation Suite — 3 Workflow Projects',
+      ar: 'مجموعة أتمتة بالذكاء الاصطناعي بـ n8n — ثلاثة مشاريع',
+    },
+    category: {
+      en: 'Automation',
+      ar: 'الأتمتة',
+    },
+    shortDescription: {
+      en: 'Three practical AI automation workflows built with n8n: an Arabic tech-news radar, a 24-hour email summarizer, and a Telegram customer-response bot.',
+      ar: 'ثلاثة مشاريع أتمتة عملية بالذكاء الاصطناعي مبنية بـ n8n: نظام لمتابعة الأخبار التقنية بالعربية، وتلخيص رسائل البريد خلال 24 ساعة، وبوت للرد على استفسارات العملاء عبر Telegram.',
+    },
+    fullDescription: {
+      en: 'A set of three production-ready automation workflows built with n8n that turn repetitive daily tasks into intelligent, Arabic-first solutions. NewsRadar AI Bot collects news from multiple sources, summarizes the top tech updates in Arabic, and delivers them as text or voice notes over Telegram. Email Summary reviews the important emails of the last 24 hours and sends an organized Arabic digest to Telegram to save time. Al-Fu\'ad Store – Customer Response Bot is a smart Telegram sales assistant that answers customer questions using the real product and inventory data, escalates the questions that need human decisions to the management team, and relays their replies back to the customer. Every workflow is modular and designed to be customized for different majors and use cases instead of being copied as a ready-made template.',
+      ar: 'مجموعة من ثلاثة سير عمل أتمتة جاهز للإنتاج مبنية بـ n8n، تحوّل المهام المتكررة إلى حلول ذكية تخدم اللغة العربية أولًا. يقوم NewsRadar AI Bot بجمع الأخبار من مصادر متعددة وتلخيص أهم المستجدات التقنية باللغة العربية، ثم إرسالها كنص أو مقطع صوتي عبر Telegram. ويقوم Email Summary بمراجعة رسائل البريد الإلكتروني المهمة خلال آخر 24 ساعة وإرسال ملخص عربي منظم إلى Telegram لتوفير الوقت. أما Al-Fu\'ad Store – Customer Response Bot فهو مساعد مبيعات ذكي عبر Telegram يجيب عن استفسارات العملاء اعتمادًا على بيانات المنتجات والمخزون، ويحوّل الأسئلة التي تحتاج إلى تدخل الإدارة إليها ثم يوصل رد الإدارة إلى العميل. جميع سير العمل معيارية وقابلة للتعديل لتناسب تخصصات واحتياجات مختلفة بدل الاقتصار على نسخ أمثلة جاهزة.',
+    },
+    thumbnail: '/assets/projects/n8n_projets.png',
+    technologies: ['n8n', 'AI Agents', 'LLM', 'Telegram Bot API', 'Text-to-Speech', 'Workflow Automation'],
+    githubUrl: 'https://github.com/salman-dev-ai/Crash_courase_n8n',
+    featured: false,
+    highlights: {
+      en: [
+        'NewsRadar AI Bot: tracks news from multiple sources and summarizes top Arabic tech updates',
+        'Delivers summaries to Telegram as both text messages and voice notes',
+        'Email Summary: digests the last 24 hours of important emails into an organized Arabic briefing',
+        'Al-Fu\'ad Store bot: answers customer questions from real product and inventory data',
+        'Human-in-the-loop: routes questions that need management to the team, then relays their replies back to the customer',
+      ],
+      ar: [
+        'NewsRadar AI Bot: متابعة الأخبار من مصادر متعددة وتلخيص أهم المستجدات التقنية بالعربية',
+        'إرسال الملخصات إلى Telegram كنصوص وكمقاطع صوتية',
+        'Email Summary: تلخيص رسائل البريد الإلكتروني المهمة خلال آخر 24 ساعة في تقرير عربي منظم',
+        'بوت متجر الفؤاد: الرد على استفسارات العملاء اعتمادًا على بيانات المنتجات والمخزون الفعلية',
+        'إشراك الإنسان في الحلقة: تحويل الأسئلة التي تحتاج تدخل الإدارة إليها ثم إيصال رد الإدارة للعميل',
+      ],
+    },
+  },
   {
     id: 'proj-7',
     slug: 'faceblog-social-blogging',

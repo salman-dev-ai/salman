@@ -1,12 +1,13 @@
 // الملف: AboutAndTechSection.tsx
 // الوظيفة: قسم نبذة عن المطوّر + "باني الستاك": يختار العميل نوع مشروعه فتضيء التقنيات المناسبة ويتدفق طلب حي عبر الطبقات
-// المحتوى: AboutAndTechSection مع aboutPoints ومجموعات frontendTech وbackendTech وdevopsTech
-// الاعتماديات: useLanguage وtechStackData وsiteConfig وأيقونات lucide-react
+// المحتوى: AboutAndTechSection مع aboutPoints ومجموعات webTech وaiTech وmobileTech وطبقات أيقونات من assets/MySkills
+// الاعتماديات: useLanguage وtechStackData وsiteConfig ومكوّن TechIcon وأيقونات lucide-react
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext.tsx';
 import { techStackData } from '../../data/technologies.ts';
 import { siteConfig } from '../../config/site.ts';
 import { User, Code, Play, ArrowRight } from 'lucide-react';
+import { TechIcon } from './TechIcon.tsx';
 
 interface AboutAndTechSectionProps {
   onOpenVideo: () => void;
@@ -20,7 +21,7 @@ interface ProjectType {
   label: { en: string; ar: string };
   reason: { en: string; ar: string };
   /** lowercase fragments matched against technology names in each category */
-  picks: { front: string[]; back: string[]; devops: string[] };
+  picks: { web: string[]; ai: string[]; mobile: string[] };
 }
 
 /**
@@ -35,7 +36,7 @@ const PROJECT_TYPES: ProjectType[] = [
       en: 'A fast, search-friendly storefront, a backend that handles orders and payments safely, and automated deploys so updates never take the shop offline.',
       ar: 'واجهة سريعة وصديقة لمحركات البحث، وخادم يعالج الطلبات والمدفوعات بأمان، ونشر آلي يحدّث المتجر دون أن يتوقف.',
     },
-    picks: { front: ['react', 'next', 'typescript', 'tailwind'], back: ['node', 'postgres', 'redis', 'express'], devops: ['docker', 'git', 'vercel', 'ci'] },
+    picks: { web: ['next', 'react', 'typescript', 'tailwind', 'php', 'laravel', 'mysql', 'express'], ai: ['python', 'pandas'], mobile: ['flutter'] },
   },
   {
     id: 'dashboard',
@@ -44,7 +45,7 @@ const PROJECT_TYPES: ProjectType[] = [
       en: 'Interactive screens that stay responsive with heavy data, a backend that serves clean, secured queries, and monitoring so problems surface before users notice.',
       ar: 'شاشات تفاعلية تبقى سلسة مع البيانات الكبيرة، وخادم يقدّم استعلامات نظيفة ومحمية، ومراقبة تكشف المشكلات قبل أن يلاحظها المستخدمون.',
     },
-    picks: { front: ['react', 'typescript', 'vite', 'tailwind'], back: ['node', 'postgres', 'graphql', 'nest'], devops: ['docker', 'git', 'github', 'linux'] },
+    picks: { web: ['react', 'next', 'typescript', 'tailwind', 'node', 'express', 'mysql'], ai: ['python', 'pandas', 'numpy', 'scikit'], mobile: [] },
   },
   {
     id: 'mobile',
@@ -53,7 +54,7 @@ const PROJECT_TYPES: ProjectType[] = [
       en: 'One codebase that feels native on every phone, a backend built for real-time sync and notifications, and a release pipeline that ships updates quickly.',
       ar: 'كود واحد يبدو أصيلاً على كل هاتف، وخادم مهيّأ للمزامنة اللحظية والإشعارات، وخط إصدار يوصل التحديثات بسرعة.',
     },
-    picks: { front: ['react', 'native', 'typescript', 'flutter'], back: ['node', 'firebase', 'mongo', 'express'], devops: ['git', 'docker', 'github', 'ci'] },
+    picks: { web: ['react', 'typescript', 'node', 'express'], ai: ['python'], mobile: ['flutter'] },
   },
   {
     id: 'api',
@@ -62,7 +63,7 @@ const PROJECT_TYPES: ProjectType[] = [
       en: 'Well-documented endpoints that other systems can rely on, a database layer designed for growth, and containers that deploy the same way everywhere.',
       ar: 'نقاط وصول موثقة تعتمد عليها الأنظمة الأخرى، وطبقة بيانات مصممة للنمو، وحاويات تُنشر بالطريقة نفسها في كل مكان.',
     },
-    picks: { front: ['typescript', 'react'], back: ['node', 'express', 'nest', 'postgres', 'python', 'redis'], devops: ['docker', 'kubernetes', 'linux', 'nginx', 'git'] },
+    picks: { web: ['node', 'express', 'php', 'laravel', 'mysql', 'typescript'], ai: ['python', 'n8n', 'opencv'], mobile: [] },
   },
 ];
 
@@ -114,9 +115,9 @@ export const AboutAndTechSection: React.FC<AboutAndTechSectionProps> = ({
     t('about.point5'),
   ];
 
-  const frontendTech = techStackData.filter((i) => i.category === 'Frontend');
-  const backendTech = techStackData.filter((i) => i.category === 'Backend');
-  const devopsTech = techStackData.filter((i) => i.category === 'DevOps & Tools');
+  const webTech = techStackData.filter((i) => i.category === 'Web');
+  const aiTech = techStackData.filter((i) => i.category === 'AI');
+  const mobileTech = techStackData.filter((i) => i.category === 'Mobile');
 
   const project = PROJECT_TYPES[projectIndex];
 
@@ -131,17 +132,17 @@ export const AboutAndTechSection: React.FC<AboutAndTechSectionProps> = ({
       return set;
     };
     return [
-      pick(frontendTech, project.picks.front),
-      pick(backendTech, project.picks.back),
-      pick(devopsTech, project.picks.devops),
+      pick(webTech, project.picks.web),
+      pick(aiTech, project.picks.ai),
+      pick(mobileTech, project.picks.mobile),
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectIndex]);
 
   const layers = [
-    { key: 'frontend', label: t('techStack.frontend'), items: frontendTech, color: '#FF641C', glow: 'rgba(255,100,28,0.45)' },
-    { key: 'backend', label: t('techStack.backend'), items: backendTech, color: '#10B981', glow: 'rgba(16,185,129,0.4)' },
-    { key: 'devops', label: t('techStack.devopsTools'), items: devopsTech, color: '#3B82F6', glow: 'rgba(59,130,246,0.4)' },
+    { key: 'web', label: t('techStack.web'), items: webTech, color: '#FF641C', glow: 'rgba(255,100,28,0.45)' },
+    { key: 'ai', label: t('techStack.ai'), items: aiTech, color: '#10B981', glow: 'rgba(16,185,129,0.4)' },
+    { key: 'mobile', label: t('techStack.mobile'), items: mobileTech, color: '#3B82F6', glow: 'rgba(59,130,246,0.4)' },
   ];
 
   const nextProject = () => setProjectIndex((p) => (p + 1) % PROJECT_TYPES.length);
@@ -408,7 +409,7 @@ export const AboutAndTechSection: React.FC<AboutAndTechSectionProps> = ({
                         return (
                           <div
                             key={item.name}
-                            className={`tb-pill ${on ? 'tb-on' : ''} flex items-center gap-2 p-2 rounded-lg border border-[#E8E0D5] dark:border-[#1E2630] bg-[#FDFBF7] dark:bg-[#131D2A] text-xs font-semibold text-[#1F2937] dark:text-[#E5E7EB]`}
+                            className={`tb-pill ${on ? 'tb-on' : ''} flex items-center justify-center p-2.5 rounded-lg border border-[#E8E0D5] dark:border-[#1E2630] bg-[#FDFBF7] dark:bg-[#131D2A]`}
                             style={
                               {
                                 '--c': layer.color,
@@ -418,8 +419,7 @@ export const AboutAndTechSection: React.FC<AboutAndTechSectionProps> = ({
                               } as React.CSSProperties
                             }
                           >
-                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: layer.color }}></span>
-                            <span className="truncate">{item.name}</span>
+                            <TechIcon name={item.icon} label={item.name} className="w-6 h-6" />
                             {on && <span className="sr-only">{UI.used[lang]}</span>}
                           </div>
                         );

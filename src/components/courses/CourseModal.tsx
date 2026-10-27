@@ -48,12 +48,19 @@ export const CourseModal: React.FC<CourseModalProps> = ({ course, onClose }) => 
           <X className="w-5 h-5" />
         </button>
 
-        {/* Course Thumbnail */}
-        <div className="relative aspect-video w-full rounded-xl overflow-hidden mb-6 bg-black border border-[#1E2630]">
+        {/* Course Thumbnail — الصورة كاملة فوق خلفية مموّهة من الصورة نفسها */}
+        <div className="relative flex justify-center mb-6 rounded-xl overflow-hidden bg-[#0B1118] border border-[#1E2630]">
+          <img
+            src={course.thumbnail}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full scale-125 object-cover blur-xl saturate-150 opacity-100"
+          />
+          <div className="absolute inset-0 bg-[#03070B]/25" aria-hidden="true"></div>
           <img
             src={course.thumbnail}
             alt={course.title[locale]}
-            className="w-full h-full object-cover"
+            className="relative max-h-[60vh] w-auto max-w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
           />
           <div className="absolute top-3 left-3 px-3 py-1 bg-[#080D12]/90 backdrop-blur-md rounded-md border border-[#1E2630] text-xs font-bold text-[#FF641C]">
             {course.difficulty}

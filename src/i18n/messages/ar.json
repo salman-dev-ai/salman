@@ -46,16 +46,16 @@
     "point4": "دمج الذكاء الاصطناعي في الأنظمة البرمجية",
     "point5": "تصميم واجهات مستخدم ذكية وسهلة الاستخدام",
     "myJourney": "مسيرتي المهنية",
-    "watchVideo": "شاهد الفيديو (1:29)",
+    "watchVideo": "شاهد الفيديو",
     "handwrittenAbout": "برمج · تعلم · ابنِ · كرّر"
   },
   "techStack": {
     "heading": "المهارات والتقنيات",
     "subheading": "التقنيات التي أعمل بها يومياً",
     "viewAll": "عرض الكل",
-    "frontend": "تطوير الويب",
-    "backend": "الذكاء الاصطناعي",
-    "devopsTools": "تطوير الموبايل"
+    "web": "تطوير الويب",
+    "ai": "الذكاء الاصطناعي",
+    "mobile": "تطوير الموبايل"
   },
   "projects": {
     "heading": "المشاريع المميزة",
@@ -72,6 +72,24 @@
     "modalTechUsed": "التقنيات المستخدمة",
     "modalLiveDemo": "معاينة مباشرة",
     "modalSourceCode": "الكود المصدري",
+    "closeModal": "إغلاق"
+  },
+  "courses": {
+    "heading": "الدورات والمسارات التعليمية",
+    "subheading": "مسارات عملية من المبتدئ إلى المتقدم",
+    "viewAll": "عرض جميع الدورات",
+    "viewCourse": "عرض الدورة",
+    "allCoursesTitle": "معرض الدورات التدريبية",
+    "searchPlaceholder": "ابحث في الدورات...",
+    "allDifficulties": "جميع المستويات",
+    "noResults": "لم يتم العثور على دورات مطابقة.",
+    "clearFilters": "إعادة تعيين الفلاتر",
+    "resultsFound": "دورات معروضة",
+    "lessons": "درساً",
+    "hours": "ساعة",
+    "modalLevel": "المستوى",
+    "modalSyllabus": "محتوى الدورة",
+    "startCourse": "ابدأ الدورة",
     "closeModal": "إغلاق"
   },
   "testimonials": {

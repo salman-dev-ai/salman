@@ -46,16 +46,16 @@
     "point4": "AI Integration in Software Systems",
     "point5": "Smart & Intuitive UI/UX Design",
     "myJourney": "My Journey",
-    "watchVideo": "Watch Video (1:29)",
+    "watchVideo": "Watch Video",
     "handwrittenAbout": "Code · Learn · Build · Repeat"
   },
   "techStack": {
     "heading": "Tech Stack",
     "subheading": "Technologies I work with",
     "viewAll": "View All",
-    "frontend": "Frontend",
-    "backend": "Backend",
-    "devopsTools": "DevOps & Tools"
+    "web": "Web Development",
+    "ai": "Artificial Intelligence",
+    "mobile": "Mobile Development"
   },
   "projects": {
     "heading": "Featured Projects",
@@ -72,6 +72,24 @@
     "modalTechUsed": "Technologies Used",
     "modalLiveDemo": "Live Preview",
     "modalSourceCode": "Source Code",
+    "closeModal": "Close"
+  },
+  "courses": {
+    "heading": "Courses & Learning Paths",
+    "subheading": "Practical paths from beginner to advanced",
+    "viewAll": "View All Courses",
+    "viewCourse": "View Course",
+    "allCoursesTitle": "All Courses",
+    "searchPlaceholder": "Search courses...",
+    "allDifficulties": "All Levels",
+    "noResults": "No matching courses found.",
+    "clearFilters": "Clear Filters",
+    "resultsFound": "courses found",
+    "lessons": "lessons",
+    "hours": "hours",
+    "modalLevel": "Level",
+    "modalSyllabus": "Course Curriculum",
+    "startCourse": "Start Course",
     "closeModal": "Close"
   },
   "testimonials": {

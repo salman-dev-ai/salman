@@ -79,5 +79,6 @@ export interface Course {
     en: string[];
     ar: string[];
   };
+  githubUrl?: string;
   featured?: boolean;
 }

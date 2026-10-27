@@ -1,46 +1,138 @@
 // الملف: JourneyVideoModal.tsx
-// الوظيفة: نافذة منبثقة لمشغّل فيديو وهمي يعرض مسيرة المهندس مع شريط تقدم وتحكم.
-// المحتوى: مكوّن JourneyVideoModal مع حالة isPlaying وprogress، وفصول القصة، ومؤقّت عبر setInterval.
-// الاعتماديات: مكوّن عميل يعتمد useLanguage للترجمة ويستورد Play وPause وRotateCcw وX من lucide-react.
-import React, { useState, useEffect } from 'react';
+// الوظيفة: نافذة منبثقة لمشغّل فيديو حقيقي (تشغيل/إيقاف/تقديم/وقت فعلي) يعرض مقطع مسيرة المهندس.
+// المحتوى: مكوّن JourneyVideoModal مربوط بعنصر <video> عبر useRef مع حالات isPlaying وisMuted وcurrentTime وduration.
+// الاعتماديات: مكوّن عميل يعتمد useLanguage للترجمة ويستورد Play وPause وRotateCcw وVolume2 وVolumeX وX من lucide-react.
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext.tsx';
-import { X, Play, Pause, RotateCcw, Volume2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 
 interface JourneyVideoModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const VIDEO_SRC = '/assets/videos/salman_alansi_profile.mp4';
+const VIDEO_POSTER = '/assets/images/about_developer_work_1792383940477.jpg';
+
+const formatTime = (value: number) => {
+  const total = Number.isFinite(value) && value > 0 ? Math.floor(value) : 0;
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+};
+
 export const JourneyVideoModal: React.FC<JourneyVideoModalProps> = ({
   isOpen,
   onClose,
 }) => {
   const { t, locale } = useLanguage();
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            setIsPlaying(false);
-            return 100;
-          }
-          return prev + 1.2;
-        });
-      }, 500);
+  const isAr = locale === 'ar';
+
+  const togglePlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      void video.play().catch(() => setIsPlaying(false));
+    } else {
+      video.pause();
     }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, []);
+
+  const seekTo = useCallback((seconds: number) => {
+    const video = videoRef.current;
+    if (!video) return;
+    const max = Number.isFinite(video.duration) ? video.duration : 0;
+    video.currentTime = Math.min(Math.max(seconds, 0), max);
+    setCurrentTime(video.currentTime);
+  }, []);
+
+  const restart = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    setCurrentTime(0);
+    void video.play().catch(() => setIsPlaying(false));
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  }, []);
+
+  // مزامنة حالة الواجهة مع أحداث الفيديو الحقيقية
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isOpen) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
+    const handleLoadedMetadata = () => setDuration(Number.isFinite(video.duration) ? video.duration : 0);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(Number.isFinite(video.duration) ? video.duration : 0);
+    };
+
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('durationchange', handleLoadedMetadata);
+    video.addEventListener('ended', handleEnded);
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('durationchange', handleLoadedMetadata);
+      video.removeEventListener('ended', handleEnded);
+    };
+  }, [isOpen]);
+
+  // عند الفتح: إعادة الضبط والتشغيل الصامت + إغلاق بمفتاح Escape + منع تمرير الخلفية
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const video = videoRef.current;
+    setCurrentTime(0);
+    setIsPlaying(false);
+    if (video) {
+      video.muted = true;
+      setIsMuted(true);
+      void video.play().catch(() => setIsPlaying(false));
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const currentSeconds = Math.floor((progress / 100) * 89);
-  const minutes = Math.floor(currentSeconds / 60);
-  const seconds = currentSeconds % 60;
-  const timeFormatted = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  const progress = duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
+  const chapters = [
+    { label: isAr ? 'البدايات والشغف' : 'Early Passion' },
+    { label: isAr ? 'المشاريع والأنظمة' : 'Building Systems' },
+    { label: isAr ? 'المستقبل والفرص' : 'What is Next' },
+  ];
 
   return (
     <div
@@ -51,7 +143,7 @@ export const JourneyVideoModal: React.FC<JourneyVideoModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl bg-[#080D12] border border-[#1E2630] rounded-2xl p-6 text-white shadow-2xl flex flex-col"
+        className="relative w-full max-w-md bg-[#080D12] border border-[#1E2630] rounded-2xl p-6 text-white shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -73,43 +165,45 @@ export const JourneyVideoModal: React.FC<JourneyVideoModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={isAr ? 'إغلاق' : 'Close'}
             className="w-8 h-8 rounded-full bg-[#131D2A] border border-[#1E2630] hover:border-[#FF641C] text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Video Canvas / Player Showcase */}
-        <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-[#1E2630] flex flex-col justify-between p-4 group">
+        {/* Player — إطار رأسي 9:16 يطابق أبعاد الفيديو بدون اقتطاع */}
+        <div className="group relative self-center aspect-[9/16] h-[58vh] max-h-[560px] min-h-[320px] w-auto max-w-full rounded-xl overflow-hidden bg-black border border-[#1E2630]">
           <video
-            src="/assets/videos/salman_alansi_profile.mp4"
-            autoPlay={isPlaying}
+            ref={videoRef}
+            src={VIDEO_SRC}
+            poster={VIDEO_POSTER}
             muted
-           
-            // ="/assets/images/about_developer_work_1792383940477.jpg"
-            // alt="Salman developer workspace"
-            className="absolute inset-0 w-full h-full object-cover opacity-60"
+            playsInline
+            preload="metadata"
+            onClick={togglePlay}
+            className="absolute inset-0 h-full w-full object-contain bg-black cursor-pointer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 
           {/* Top badge */}
-          <div className="relative z-10 flex items-center justify-between text-xs font-semibold">
+          <div className="pointer-events-none absolute top-0 inset-x-0 z-10 flex items-center justify-between gap-2 p-3 text-xs font-semibold">
             <span className="px-2.5 py-1 rounded bg-[#080D12]/80 backdrop-blur-md text-[#FF641C] border border-white/10">
-              {locale === 'ar' ? 'فيديو مسيرة التطوير' : 'Developer Journey Documentary'}
+              {isAr ? 'فيديو مسيرة التطوير' : 'Developer Journey Documentary'}
             </span>
-            <span className="font-mono text-gray-300">
-              {timeFormatted} / 1:29
+            <span className="font-mono text-gray-200 px-2 py-1 rounded bg-[#080D12]/80 backdrop-blur-md border border-white/10">
+              {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
 
           {/* Center Play Button Overlay */}
-          <div className="relative z-10 self-center my-auto">
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
             <button
               type="button"
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="w-16 h-16 rounded-full bg-[#FF641C] hover:bg-[#E05312] text-white flex items-center justify-center shadow-2xl transition-transform transform hover:scale-110 active:scale-95 cursor-pointer"
-              aria-label={isPlaying ? 'Pause' : 'Play'}
+              onClick={togglePlay}
+              className={`w-16 h-16 rounded-full bg-[#FF641C] hover:bg-[#E05312] text-white flex items-center justify-center shadow-2xl transition-all duration-200 transform hover:scale-110 active:scale-95 cursor-pointer pointer-events-auto ${
+                isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'
+              }`}
+              aria-label={isPlaying ? (isAr ? 'إيقاف مؤقت' : 'Pause') : isAr ? 'تشغيل' : 'Play'}
             >
               {isPlaying ? (
                 <Pause className="w-7 h-7 fill-current" />
@@ -120,39 +214,51 @@ export const JourneyVideoModal: React.FC<JourneyVideoModalProps> = ({
           </div>
 
           {/* Bottom Progress Bar & Controls */}
-          <div className="relative z-10 space-y-2">
-            <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden cursor-pointer"
+          <div className="absolute bottom-0 inset-x-0 z-10 space-y-2 p-3 bg-gradient-to-t from-black/85 via-black/50 to-transparent">
+            <div
+              role="slider"
+              aria-label={isAr ? 'شريط التقدم' : 'Progress'}
+              aria-valuemin={0}
+              aria-valuemax={Math.round(duration)}
+              aria-valuenow={Math.round(currentTime)}
+              className="w-full bg-white/25 h-1.5 rounded-full cursor-pointer"
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
-                const percent = Math.min(Math.max((clickX / rect.width) * 100, 0), 100);
-                setProgress(percent);
+                const percent = Math.min(Math.max(clickX / rect.width, 0), 1);
+                if (duration > 0) seekTo(percent * duration);
               }}
             >
               <div
-                className="bg-[#FF641C] h-full transition-all duration-300 rounded-full"
+                className="bg-[#FF641C] h-full rounded-full"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-gray-300">
+            <div className="flex items-center justify-between text-xs text-gray-200">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="hover:text-white"
+                  onClick={togglePlay}
+                  className="font-semibold hover:text-white cursor-pointer"
                 >
-                  {isPlaying ? 'Pause' : 'Play'}
+                  {isPlaying ? (isAr ? 'إيقاف' : 'Pause') : isAr ? 'تشغيل' : 'Play'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setProgress(0);
-                    setIsPlaying(true);
-                  }}
-                  className="hover:text-white"
+                  onClick={restart}
+                  aria-label={isAr ? 'إعادة من البداية' : 'Restart'}
+                  className="hover:text-white cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  aria-label={isMuted ? (isAr ? 'تشغيل الصوت' : 'Unmute') : isAr ? 'كتم الصوت' : 'Mute'}
+                  className="hover:text-white cursor-pointer"
+                >
+                  {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
@@ -163,21 +269,24 @@ export const JourneyVideoModal: React.FC<JourneyVideoModalProps> = ({
           </div>
         </div>
 
-        {/* Story chapters */}
-        <div className="mt-4 pt-4 border-t border-[#1E2630] grid grid-cols-3 gap-2 text-center text-xs text-gray-400">
-          <div className="p-2 rounded-lg bg-[#0E151E] border border-[#1E2630]">
-            <span className="block text-[#FF641C] font-bold">0:00 - 0:30</span>
-            <span className="text-[11px]">{locale === 'ar' ? 'البدايات والشغف' : 'Early Passion'}</span>
+        {/* Story chapters — تُحسب من المدة الحقيقية للفيديو */}
+        {duration > 0 && (
+          <div className="mt-4 pt-4 border-t border-[#1E2630] grid grid-cols-3 gap-2 text-center text-xs text-gray-400">
+            {chapters.map((chapter, index) => (
+              <button
+                key={chapter.label}
+                type="button"
+                onClick={() => seekTo((duration / chapters.length) * index)}
+                className="p-2 rounded-lg bg-[#0E151E] border border-[#1E2630] hover:border-[#FF641C]/60 transition-colors cursor-pointer"
+              >
+                <span className="block text-[#FF641C] font-bold">
+                  {formatTime((duration / chapters.length) * index)} - {formatTime((duration / chapters.length) * (index + 1))}
+                </span>
+                <span className="text-[11px]">{chapter.label}</span>
+              </button>
+            ))}
           </div>
-          <div className="p-2 rounded-lg bg-[#0E151E] border border-[#1E2630]">
-            <span className="block text-[#FF641C] font-bold">0:30 - 1:00</span>
-            <span className="text-[11px]">{locale === 'ar' ? 'المشاريع والأنظمة' : 'Building Systems'}</span>
-          </div>
-          <div className="p-2 rounded-lg bg-[#0E151E] border border-[#1E2630]">
-            <span className="block text-[#FF641C] font-bold">1:00 - 1:29</span>
-            <span className="text-[11px]">{locale === 'ar' ? 'المستقبل والفرص' : 'What is Next'}</span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

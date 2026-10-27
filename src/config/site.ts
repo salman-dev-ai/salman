@@ -27,7 +27,6 @@ export const siteConfig = {
   learningStack: [
     'Flutter',
     'Dart',
-    'n8n',
     'Yolo',
   ],
 };

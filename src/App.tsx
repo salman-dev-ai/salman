@@ -130,7 +130,7 @@ function PortfolioApp() {
             />
 
             {/* Testimonial Section with Network Globe */}
-            <TestimonialSection />
+            {/* <TestimonialSection /> */}
 
             {/* Dramatic Mountain Sunset Contact Banner & Get in Touch Panel */}
             <ContactBanner
