@@ -117,6 +117,8 @@
     "subtitle": "Download or preview verified resume",
     "downloadEn": "Download English CV (PDF)",
     "downloadAr": "Download Arabic CV (PDF)",
+    "printEn": "Print (EN)",
+    "printAr": "Print (AR)",
     "previewNotice": "This is an official profile document. Replace with your customized PDF asset.",
     "close": "Close"
   },

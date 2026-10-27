@@ -19,9 +19,9 @@ export const siteConfig = {
   cvEnglishPath: '/cv/Salman_AI_Engineer_CV_en.pdf',
   cvArabicPath: '/cv/Salman_CV_Arabic.pdf',
   stats: {
-    projectsCount: '6+',
+    projectsCount: '4+',
     coursesCount: '3+',
-    yearsExperience: '2+',
+    yearsExperience: '1+',
     openToOpportunities: true,
   },
   learningStack: [

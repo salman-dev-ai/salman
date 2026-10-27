@@ -37,8 +37,25 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
     document.body.removeChild(link);
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrint = (lang: 'en' | 'ar') => {
+    // يطبع ملف السيرة الذاتية الفعلي للغة التي يختارها مسؤول التوظيف عبر إطار مخفي
+    const cvPath = lang === 'ar' ? siteConfig.cvArabicPath : siteConfig.cvEnglishPath;
+    let frame = document.getElementById('cv-print-frame') as HTMLIFrameElement | null;
+    if (!frame) {
+      frame = document.createElement('iframe');
+      frame.id = 'cv-print-frame';
+      frame.style.position = 'fixed';
+      frame.style.width = '0';
+      frame.style.height = '0';
+      frame.style.border = '0';
+      frame.style.visibility = 'hidden';
+      document.body.appendChild(frame);
+    }
+    frame.onload = () => {
+      frame?.contentWindow?.focus();
+      frame?.contentWindow?.print();
+    };
+    frame.src = cvPath;
   };
 
   return (
@@ -128,11 +145,20 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
 
           <button
             type="button"
-            onClick={handlePrint}
+            onClick={() => handlePrint('en')}
             className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4" />
-            <span>Print View</span>
+            <span>{t('cvModal.printEn')}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handlePrint('ar')}
+            className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer"
+          >
+            <Printer className="w-4 h-4" />
+            <span>{t('cvModal.printAr')}</span>
           </button>
 
           <button
